@@ -1,9 +1,9 @@
 -- super tiny raytracing that fits on a bussiness card (well, not yet)
--- original: https://fabiensanglard.net/rayTracing_back_of_business_card/
+-- original code and comments: https://fabiensanglard.net/rayTracing_back_of_business_card/
 -- inspiration: https://github.com/edubart/lunray
-
 require 'math'
 
+-------------------------------------------------
 -- define a vector record
 local vec = @record{
    x: number,
@@ -12,29 +12,30 @@ local vec = @record{
 }
 
 -- vector add
-function v:__add(r: vec): vec
+function vec.__add(self: vec, r: vec): vec
    return (@vec){ self.x + r.x, self.y + r.y, self.z + r.z }
 end
 
 -- vector scaling
-function v:__mul(r: number): vec
+function vec.__mul(self: vec, r: number): vec
    return (@vec){ self.x * r, self.y * r, self.z * r }
 end
 
 -- vector dot product
-function v:__mod(r: vec): number
+function vec.__mod(self: vec, r: vec): number
    return self.x * r.x + self.y * r.y + self.z * r.z
 end
 
 -- cross product
-function v:__pow(r: vec): vec
+function vec.__bxor(self: vec, r: vec): vec
    return (@vec){ self.y * r.z - self.z * r.y, self.z * r.x - self.x * r.z, self.x * r.y - self.y * r.x }
 end
 
 -- used later for normalizing
-function v:__len(): vec
+function vec.__len(self: vec): vec
    return self * (1 / math.sqrt(self % self))
 end
+-------------------------------------------------
 
 
 
