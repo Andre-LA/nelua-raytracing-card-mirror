@@ -37,5 +37,22 @@ function vec.__len(self: vec): vec
 end
 -------------------------------------------------
 
+-- the set of sphere positions describing the world.
+-- those integers are in fact bit vectors
+local G: integer[9] = {247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16}
+--[[
+   16                    1
+   16                    1
+   231184   111    111   1
+   18577       1  1   1  1   1
+   18578       1  1   1  1  1
+   249748   1111  11111  1 1
+   280600  1   1  1      11
+   280596  1   1  1      1 1
+   247570   1111   111   1  1
+]]
 
+-- random generator, return a number within range [0-1]
+local function R(): number <inline> return math.random() end
+-------------------------------------------------
 
