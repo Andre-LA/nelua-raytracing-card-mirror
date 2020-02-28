@@ -59,9 +59,49 @@ local G: integer[9] = {247570, 280596, 280600, 249748, 18578, 18577, 231184, 16,
 local function R(): number <inline> return math.random() end
 -------------------------------------------------
 
--- (S)ample the
+local function T(o: vec, d: vec, t: number*, n: vec*): integer
+   return 10
+end
+
+-- (S)ample the world and return the pixel color for
+-- a ray passing by point o (origin) and d (direction)
 local function S(o: vec, d: vec): vec
-   return o
+   local t: number;
+   local n: vec;
+
+   -- search for an intersection ray vs world
+   local m: integer = T(o, d, &t, &n)
+
+   if m == 0 then -- no sphere found and the ray goes upward: generate a sky color
+      return (@vec){0.7, 0.6, 1} * ((1 - d.z) ^ 4)
+   end
+
+   -- a sphere was maybe hit
+   local h: vec = o + d * t                                 -- h = intersection coordinate
+   local l: vec = # ((@vec){9 + R(), 9 + R(), 16} + h * -1) -- 'l' = direction to light (random delta for shadows)
+   local r: vec = d + n * (n % d * -2)                      -- r = the half-vector
+
+   -- calculated the lambertian vector
+   local b: number = l % n
+
+   -- calculate illumination factor (lambertian coefficient > 0 or in shadow)?
+   if b < 0 or T(h, l, &t, &n) ~= 0 then
+      b = 0
+   end
+
+   -- calculate the color 'p' with diffuse and specular component
+   local _bgz: integer = (b>0) and 1 or 0
+   local p: number = (l % r * _bgz) ^ 99
+
+   if m & 1 == 1 then
+      h = h * 0.2 -- no sphere was hit and the ray was going downward: Generate a floor color
+      local _cr: integer = (@integer)(math.ceil(h.x) + math.ceil(h.y))
+      local v: vec = (_cr & 1 == 1) and (@vec){1,1,1} or (@vec){3,3,3}
+      return v * (b * 0.2 + 0.1)
+   end
+
+   -- m == 2 A sphere was hit. cast an ray bouncing from the sphere surface.
+   return (@vec){p,p,p} + S(h, r) * 0.5
 end
 
 -- the main funciton. It generates a PPM image to stdout.
