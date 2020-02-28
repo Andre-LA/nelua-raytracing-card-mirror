@@ -1,6 +1,9 @@
 -- super tiny raytracing that fits on a bussiness card (well, not yet)
 -- original code and comments: https://fabiensanglard.net/rayTracing_back_of_business_card/
 -- inspiration: https://github.com/edubart/lunray
+## cinclude '<stdio.h>'
+local function printf_iii(fmt: cstring, arg1: cint, arg2: cint, arg3: cint) <cimport'printf', nodecl> end
+
 require 'math'
 
 -------------------------------------------------
@@ -94,6 +97,7 @@ local function main()
                # (t * -1 + (a * (R() + x) + b * (y + R()) + c) * 16) -- ray direction with random deltas for stochastic sampling
             ) * 3.5 + p -- +p fr color accumulation
          end
+         printf_iii('%c%c%c', (@cint)(p.x), (@cint)(p.y), (@cint)(p.z))
       end
    end
 end
