@@ -56,3 +56,46 @@ local G: integer[9] = {247570, 280596, 280600, 249748, 18578, 18577, 231184, 16,
 local function R(): number <inline> return math.random() end
 -------------------------------------------------
 
+-- (S)ample the
+local function S(o: vec, d: vec): vec
+   return o
+end
+
+-- the main funciton. It generates a PPM image to stdout.
+-- usage of the program is hence: ./card > erk.ppm
+local function main()
+   print 'p6 512 512 255'
+
+   -- the # operator are for normalizing each vectors with # operator.
+   -- camera direction
+   local g = # ((@vec){-6, -16, 0})
+
+   local a = # (((@vec){0, 0, 1} ~ g) * 0.002)
+
+   -- the right vector, obtained via traditional cross-product
+   local b = # ((g ~ a) * 0.002)
+
+   local c = (a+b) * -256 + g
+
+   for y = 512, 0, -1 do -- for each column
+      for x = 512, 0, -1 do -- for each pixel in a line
+         -- reuse the vector record to stra not XYZ but a RGB pixel color
+         local p: vec = {13, 13, 13}
+
+         -- cast 64 rays per pixel (for blue (stochastic sampling) and soft-shadows)
+         for r = 64, 0, -1 do
+            -- the delta to apply to the origin of the view (for Depth of View blur).
+            local t: vec = a * (R() - 0.5) * 99 + b * (R() * -0.5) * 99 -- a little bit of delta
+
+            -- set a camera focal point v(17, 16, 8) and cast the ray
+            -- accumulate the color returned in the p variable
+            p = S(
+               (@vec){17, 16, 8} + t, -- ray origin
+               # (t * -1 + (a * (R() + x) + b * (y + R()) + c) * 16) -- ray direction with random deltas for stochastic sampling
+            ) * 3.5 + p -- +p fr color accumulation
+         end
+      end
+   end
+end
+
+main()
