@@ -61,9 +61,48 @@ local G: integer[9] = {247570, 280596, 280600, 249748, 18578, 18577, 231184, 16,
 -- random generator, return a number within range [0-1]
 local function R(): number <inline> return math.random() end
 -------------------------------------------------
-
+-- the intersection test for line [o, v]
+-- return 2 if a hit was found (and also return distance t and bouncing ray n)
+-- return 0 if no hit was found but ray goes upward
+-- return 1 if no hit was found but ray goes downward
 local function T(o: vec, d: vec, t: number*, n: vec*): integer
-   return 10
+   $t = 1e9
+   local m: integer = 0
+
+   local p: number = -o.z / d.z
+   if 0.01 < p then
+      $t = p
+      $n = (@vec){0,0,1}
+      m = 1
+   end
+
+   -- the world is encoded in G, with 9 lines and 19 columns
+   for k = 18, 0, -1 do
+      for j = 8, 0, -1 do
+         if G[j] & (1 << k) == 1 then -- for this line j, is there a sphere at column i?
+            local p: vec = o + (@vec){-k, 0, -j-4}
+            local b: number = p % d
+            local c: number = p % p - 1
+            local q: number = b * b - c
+
+            -- does the ray hit the sphere?
+            if q > 0 then
+               -- it does, compute the distance camera-sphere
+               local s: number = -b - math.sqrt(q)
+
+               if s < $t and s > 0.01 then
+                  -- so far this is the minimum distance, save it. And also
+                  -- compute the bouncing ray vector into 'n'
+                  $t = s
+                  $n = # (p + d * $t)
+                  m = 2
+               end
+            end
+         end
+      end
+   end
+
+   return m
 end
 -------------------------------------------------
 -- (S)ample the world and return the pixel color for
