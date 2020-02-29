@@ -1,6 +1,9 @@
 -- super tiny raytracing that fits on a bussiness card (well, not yet)
 -- original code and comments: https://fabiensanglard.net/rayTracing_back_of_business_card/
 -- inspiration: https://github.com/edubart/lunray
+
+-- this code is very "raw C-ish" and should not be considered a good nelua code
+
 ## cinclude '<stdio.h>'
 local function printf_iii(fmt: cstring, arg1: cint, arg2: cint, arg3: cint) <cimport'printf', nodecl> end
 
