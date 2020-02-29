@@ -149,7 +149,7 @@ end
 -- the main funciton. It generates a PPM image to stdout.
 -- usage of the program is hence: ./card > erk.ppm
 local function main()
-   print 'p6 512 512 255'
+   print 'P6 512 512 255'
 
    -- the # operator are for normalizing each vectors with # operator.
    -- camera direction
@@ -177,8 +177,10 @@ local function main()
             p = S(
                (@vec){17, 16, 8} + t, -- ray origin
                # (t * -1 + (a * (R() + x) + b * (y + R()) + c) * 16) -- ray direction with random deltas for stochastic sampling
-            ) * 3.5 + p -- +p fr color accumulation
+            ) * 3.5 + p -- +p for color accumulation
+
          end
+
          printf_iii('%c%c%c', (@cint)(p.x), (@cint)(p.y), (@cint)(p.z))
       end
    end
