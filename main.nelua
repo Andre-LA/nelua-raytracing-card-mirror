@@ -65,7 +65,7 @@ local function R(): number <inline> return math.random() end
 local function T(o: vec, d: vec, t: number*, n: vec*): integer
    return 10
 end
-
+-------------------------------------------------
 -- (S)ample the world and return the pixel color for
 -- a ray passing by point o (origin) and d (direction)
 local function S(o: vec, d: vec): vec
@@ -106,7 +106,7 @@ local function S(o: vec, d: vec): vec
    -- m == 2 A sphere was hit. cast an ray bouncing from the sphere surface.
    return (@vec){p,p,p} + S(h, r) * 0.5
 end
-
+-------------------------------------------------
 -- the main funciton. It generates a PPM image to stdout.
 -- usage of the program is hence: ./card > erk.ppm
 local function main()
