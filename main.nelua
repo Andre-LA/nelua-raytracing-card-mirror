@@ -79,7 +79,7 @@ local function T(o: vec, d: vec, t: number*, n: vec*): integer
    -- the world is encoded in G, with 9 lines and 19 columns
    for k = 18, 0, -1 do
       for j = 8, 0, -1 do
-         if G[j] & (1 << k) == 1 then -- for this line j, is there a sphere at column i?
+         if G[j] & (1 << k) ~= 0 then -- for this line j, is there a sphere at column i?
             local p: vec = o + (@vec){-k, 0, -j-4}
             local b: number = p % d
             local c: number = p % p - 1
@@ -138,7 +138,7 @@ local function S(o: vec, d: vec): vec
    if m & 1 == 1 then
       h = h * 0.2 -- no sphere was hit and the ray was going downward: Generate a floor color
       local _cr: integer = (@integer)(math.ceil(h.x) + math.ceil(h.y))
-      local v: vec = (_cr & 1 == 1) and (@vec){1,1,1} or (@vec){3,3,3}
+      local v: vec = (_cr & 1 == 1) and (@vec){3,1,1} or (@vec){3,3,3}
       return v * (b * 0.2 + 0.1)
    end
 
@@ -155,22 +155,22 @@ local function main()
    -- camera direction
    local g = # ((@vec){-6, -16, 0})
 
-   local a = # (((@vec){0, 0, 1} ~ g) * 0.002)
+   local a = # ((@vec){0, 0, 1} ~ g) * 0.002
 
    -- the right vector, obtained via traditional cross-product
-   local b = # ((g ~ a) * 0.002)
+   local b = # (g ~ a) * 0.002
 
    local c = (a+b) * -256 + g
 
-   for y = 512, 0, -1 do -- for each column
-      for x = 512, 0, -1 do -- for each pixel in a line
+   for y = 512, 1, -1 do -- for each column
+      for x = 512, 1, -1 do -- for each pixel in a line
          -- reuse the vector record to stra not XYZ but a RGB pixel color
          local p: vec = {13, 13, 13}
 
          -- cast 64 rays per pixel (for blue (stochastic sampling) and soft-shadows)
-         for r = 64, 0, -1 do
+         for r = 64, 1, -1 do
             -- the delta to apply to the origin of the view (for Depth of View blur).
-            local t: vec = a * (R() - 0.5) * 99 + b * (R() * -0.5) * 99 -- a little bit of delta
+            local t: vec = a * (R() - 0.5) * 99 + b * (R() - -0.5) * 99 -- a little bit of delta
 
             -- set a camera focal point v(17, 16, 8) and cast the ray
             -- accumulate the color returned in the p variable
